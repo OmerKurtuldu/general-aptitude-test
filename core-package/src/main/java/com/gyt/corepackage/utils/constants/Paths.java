@@ -11,7 +11,8 @@ public class Paths {
         public static final String ServiceBasePackage = "com.gyt.questionservice";
     }
 
-
-
+    public static class Search {
+        public static final String ServiceBasePackage = "com.gyt.searchservice";
+    }
 
 }

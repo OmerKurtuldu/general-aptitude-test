@@ -1,6 +1,6 @@
 package com.gyt.questionservice.models.entities;
 
-import com.gyt.corepackage.entities.BaseEntity;
+import com.gyt.corepackage.models.entities.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +23,8 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private Boolean isEditable = true;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    // TODO: 9.08.2024 eager nasıl olur ?  
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, mappedBy = "question")
     private List<Option> options;
 
     @Column

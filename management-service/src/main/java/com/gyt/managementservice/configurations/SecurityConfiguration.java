@@ -1,7 +1,7 @@
 package com.gyt.managementservice.configurations;
 
 import com.gyt.corepackage.configuration.BaseSecurityService;
-import com.gyt.managementservice.model.enums.RoleType;
+import com.gyt.corepackage.models.enums.RoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

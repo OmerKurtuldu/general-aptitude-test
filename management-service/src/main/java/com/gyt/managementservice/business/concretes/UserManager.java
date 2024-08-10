@@ -1,5 +1,6 @@
 package com.gyt.managementservice.business.concretes;
 
+import com.gyt.corepackage.models.enums.RoleType;
 import com.gyt.managementservice.business.abstracts.RoleService;
 import com.gyt.managementservice.business.abstracts.UserService;
 import com.gyt.managementservice.business.dtos.request.RegisterRequest;
@@ -13,7 +14,7 @@ import com.gyt.managementservice.mapper.RoleMapper;
 import com.gyt.managementservice.mapper.UserMapper;
 import com.gyt.managementservice.model.entities.Role;
 import com.gyt.managementservice.model.entities.User;
-import com.gyt.managementservice.model.enums.RoleType;
+
 import com.gyt.managementservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -130,7 +131,7 @@ public class UserManager implements UserService {
     public Set<Role> setUserAuthorities(Set<Role> authorities) {
         log.debug("Setting user authorities");
         for (Role role : authorities) {
-            if (role.getName().equals("organization")) {
+            if (role.getName().equals(RoleType.ORGANIZATION)) {
                 return Set.of(role);
             } else {
                 return Set.of(role);

@@ -3,7 +3,7 @@ package com.gyt.managementservice.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.gyt.managementservice.model.enums.RoleType;
+import com.gyt.corepackage.models.enums.RoleType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

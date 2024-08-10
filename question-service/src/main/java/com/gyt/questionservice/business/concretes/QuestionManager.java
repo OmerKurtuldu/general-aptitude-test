@@ -1,6 +1,10 @@
 package com.gyt.questionservice.business.concretes;
 
 import com.gyt.corepackage.business.abstracts.MessageService;
+import com.gyt.corepackage.events.question.CreatedQuestionEvent;
+import com.gyt.corepackage.events.question.DeletedQuestionEvent;
+import com.gyt.corepackage.events.question.UpdatedQuestionEvent;
+import com.gyt.corepackage.models.enums.RoleType;
 import com.gyt.corepackage.utils.exceptions.types.BusinessException;
 import com.gyt.questionservice.api.clients.ManagementServiceClient;
 import com.gyt.questionservice.business.abstracts.OptionService;
@@ -9,11 +13,13 @@ import com.gyt.questionservice.business.dtos.dto.OptionDto;
 import com.gyt.questionservice.business.dtos.dto.QuestionDto;
 import com.gyt.questionservice.business.dtos.request.create.CreateOptionRequest;
 import com.gyt.questionservice.business.dtos.request.create.CreateQuestionRequest;
+import com.gyt.questionservice.business.dtos.request.update.UpdateQuestionEditableRequest;
 import com.gyt.questionservice.business.dtos.request.update.UpdateQuestionRequest;
 import com.gyt.questionservice.business.dtos.response.GetUserResponse;
 import com.gyt.questionservice.business.messages.Messages;
 import com.gyt.questionservice.business.rules.OptionBusinessRules;
 import com.gyt.questionservice.business.rules.QuestionBusinessRules;
+import com.gyt.questionservice.kafka.producer.QuestionProducer;
 import com.gyt.questionservice.mapper.OptionMapper;
 import com.gyt.questionservice.mapper.QuestionMapper;
 import com.gyt.questionservice.models.entities.Option;
@@ -43,6 +49,7 @@ public class QuestionManager implements QuestionService {
     private final MessageService messageService;
     private final QuestionMapper questionMapper;
     private final OptionMapper optionMapper;
+    private final QuestionProducer questionProducer;
 
     @Override
     @Transactional
@@ -54,16 +61,16 @@ public class QuestionManager implements QuestionService {
 
         Question question = createAndSaveQuestion(request);
 
-        final Question savedQuestion = questionRepository.save(question);
-
         List<OptionDto> options = createAndSaveOptions(request.getOptionRequestList(), question);
 
         QuestionDto questionDto = questionMapper.questionToDto(question);
         questionDto.setOptions(options);
+        sendCreatedQuestionToSearchService(question);
 
         log.info("Question with text: {} created successfully", request.getText());
         return questionDto;
     }
+
 
     @Override
     public QuestionDto updateQuestion(UpdateQuestionRequest request) {
@@ -78,8 +85,9 @@ public class QuestionManager implements QuestionService {
         Question question = questionMapper.updateQuestionRequestToEntity(request);
         question.setCreatorId(foundQuestion.getCreatorId());
         questionRepository.save(question);
-
         log.info("Question with ID: {} updated successfully", request.getId());
+
+        sendUpdatedQuestionToSearchService(question);
 
         return questionMapper.questionToDto(question);
     }
@@ -123,6 +131,7 @@ public class QuestionManager implements QuestionService {
     }
 
     @Override
+    @Transactional
     public void deleteQuestionById(Long id) {
         log.info("Delete request received for question with ID: {}", id);
 
@@ -130,8 +139,9 @@ public class QuestionManager implements QuestionService {
                 .orElseThrow(() -> new BusinessException(messageService.getMessage(Messages.QuestionErrors.QuestionShouldBeExist)));
 
         questionBusinessRules.userAuthorizationCheck(foundQuestion.getCreatorId());
-
         questionRepository.deleteById(id);
+
+        sendDeletedQuestionToSearchService(foundQuestion);
 
         log.info("Question with ID: {} deleted successfully", id);
     }
@@ -157,6 +167,15 @@ public class QuestionManager implements QuestionService {
         log.info("Option added to question with ID: {} successfully", questionId);
 
         return optionMapper.optionToDto(option);
+    }
+
+    @Override
+    public void updateQuestionsEditableStatus(UpdateQuestionEditableRequest request) {
+        List<Question> questions = questionRepository.findAllById(request.getQuestionIds());
+        for (Question question : questions) {
+            question.setIsEditable(request.isEditable());
+        }
+        questionRepository.saveAll(questions);
     }
 
 
@@ -185,7 +204,7 @@ public class QuestionManager implements QuestionService {
 
 
     public Long getCreatorId(GetUserResponse getUserResponse) {
-        boolean hasOrganizationRole = getUserResponse.getRoles().contains("ORGANIZATION");
+        boolean hasOrganizationRole = getUserResponse.getRoles().contains(RoleType.ORGANIZATION);
 
         if (hasOrganizationRole) {
             log.info("User with ID: {} has organization role", getUserResponse.getId());
@@ -193,5 +212,20 @@ public class QuestionManager implements QuestionService {
         }
         log.warn("User with ID: {} does not have organization role", getUserResponse.getId());
         return null;
+    }
+
+    private void sendCreatedQuestionToSearchService(Question question) {
+        CreatedQuestionEvent createdQuestionEvent = questionMapper.questionToCreatedQuestionEvent(question);
+        questionProducer.sendQuestionForCreate(createdQuestionEvent);
+    }
+
+    private void sendUpdatedQuestionToSearchService(Question question) {
+        UpdatedQuestionEvent updatedQuestionEvent = questionMapper.questionToUpdatedQuestionEvent(question);
+        questionProducer.sendQuestionForUpdate(updatedQuestionEvent);
+    }
+
+    private void sendDeletedQuestionToSearchService(Question question) {
+        DeletedQuestionEvent deletedQuestionEvent = questionMapper.questionToDeletedQuestionEvent(question);
+        questionProducer.sendQuestionForDelete(deletedQuestionEvent);
     }
 }

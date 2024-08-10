@@ -1,6 +1,6 @@
 package com.gyt.questionservice.models.entities;
 
-import com.gyt.corepackage.entities.BaseEntity;
+import com.gyt.corepackage.models.entities.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +19,7 @@ public class Option extends BaseEntity {
     @Column(nullable = false)
     private Boolean isCorrect;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
     private Question question;
 

@@ -4,6 +4,7 @@ import com.gyt.questionservice.business.abstracts.QuestionService;
 import com.gyt.questionservice.business.dtos.dto.OptionDto;
 import com.gyt.questionservice.business.dtos.request.create.CreateOptionRequest;
 import com.gyt.questionservice.business.dtos.request.create.CreateQuestionRequest;
+import com.gyt.questionservice.business.dtos.request.update.UpdateQuestionEditableRequest;
 import com.gyt.questionservice.business.dtos.request.update.UpdateQuestionRequest;
 import com.gyt.questionservice.business.dtos.dto.QuestionDto;
 import jakarta.validation.Valid;
@@ -70,5 +71,12 @@ public class QuestionController {
         OptionDto response = questionService.addOptionToQuestion(questionId, createOptionRequest);
         log.info("Option added to question with ID: {} successfully", questionId);
         return response;
+    }
+
+    @PostMapping("/update/questions-editable-status")
+    @ResponseStatus(HttpStatus.OK)
+    public void UpdateQuestionsEditableStatus(@RequestBody UpdateQuestionEditableRequest request) {
+        questionService.updateQuestionsEditableStatus(request);
+
     }
 }

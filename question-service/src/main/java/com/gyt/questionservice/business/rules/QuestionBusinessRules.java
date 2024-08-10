@@ -1,6 +1,7 @@
 package com.gyt.questionservice.business.rules;
 
 import com.gyt.corepackage.business.abstracts.MessageService;
+import com.gyt.corepackage.models.enums.RoleType;
 import com.gyt.corepackage.utils.exceptions.types.BusinessException;
 import com.gyt.questionservice.api.clients.ManagementServiceClient;
 import com.gyt.questionservice.business.dtos.response.GetUserResponse;
@@ -19,7 +20,7 @@ public class QuestionBusinessRules {
         boolean hasOrganizationRole = false;
 
         for (String role : authenticatedUser.getRoles()) {
-            if (role.equals("ORGANIZATION")) {
+            if (role.equals(RoleType.ORGANIZATION)) {
                 hasOrganizationRole = true;
             }
         }

@@ -1,11 +1,11 @@
 package com.gyt.managementservice.business.concretes;
 
+import com.gyt.corepackage.models.enums.RoleType;
 import com.gyt.managementservice.business.abstracts.RoleService;
 import com.gyt.managementservice.business.dtos.response.get.GetRoleResponse;
 import com.gyt.managementservice.business.rules.RoleBusinessRules;
 import com.gyt.managementservice.mapper.RoleMapper;
 import com.gyt.managementservice.model.entities.Role;
-import com.gyt.managementservice.model.enums.RoleType;
 import com.gyt.managementservice.repository.RoleRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

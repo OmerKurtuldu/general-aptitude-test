@@ -1,4 +1,4 @@
-package com.gyt.corepackage.entities;
+package com.gyt.corepackage.models.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

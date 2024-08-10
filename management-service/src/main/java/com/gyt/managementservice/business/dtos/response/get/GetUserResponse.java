@@ -1,6 +1,7 @@
 package com.gyt.managementservice.business.dtos.response.get;
 
-import com.gyt.managementservice.model.enums.RoleType;
+
+import com.gyt.corepackage.models.enums.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

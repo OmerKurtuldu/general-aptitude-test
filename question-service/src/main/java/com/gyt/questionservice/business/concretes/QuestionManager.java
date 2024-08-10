@@ -4,6 +4,7 @@ import com.gyt.corepackage.business.abstracts.MessageService;
 import com.gyt.corepackage.events.question.CreatedQuestionEvent;
 import com.gyt.corepackage.events.question.DeletedQuestionEvent;
 import com.gyt.corepackage.events.question.UpdatedQuestionEvent;
+import com.gyt.corepackage.models.enums.RoleType;
 import com.gyt.corepackage.utils.exceptions.types.BusinessException;
 import com.gyt.questionservice.api.clients.ManagementServiceClient;
 import com.gyt.questionservice.business.abstracts.OptionService;
@@ -12,6 +13,7 @@ import com.gyt.questionservice.business.dtos.dto.OptionDto;
 import com.gyt.questionservice.business.dtos.dto.QuestionDto;
 import com.gyt.questionservice.business.dtos.request.create.CreateOptionRequest;
 import com.gyt.questionservice.business.dtos.request.create.CreateQuestionRequest;
+import com.gyt.questionservice.business.dtos.request.update.UpdateQuestionEditableRequest;
 import com.gyt.questionservice.business.dtos.request.update.UpdateQuestionRequest;
 import com.gyt.questionservice.business.dtos.response.GetUserResponse;
 import com.gyt.questionservice.business.messages.Messages;
@@ -167,6 +169,15 @@ public class QuestionManager implements QuestionService {
         return optionMapper.optionToDto(option);
     }
 
+    @Override
+    public void updateQuestionsEditableStatus(UpdateQuestionEditableRequest request) {
+        List<Question> questions = questionRepository.findAllById(request.getQuestionIds());
+        for (Question question : questions) {
+            question.setIsEditable(request.isEditable());
+        }
+        questionRepository.saveAll(questions);
+    }
+
 
     private Question createAndSaveQuestion(CreateQuestionRequest request) {
         Question question = questionMapper.createQuestionRequestToEntity(request);
@@ -193,7 +204,7 @@ public class QuestionManager implements QuestionService {
 
 
     public Long getCreatorId(GetUserResponse getUserResponse) {
-        boolean hasOrganizationRole = getUserResponse.getRoles().contains("ORGANIZATION");
+        boolean hasOrganizationRole = getUserResponse.getRoles().contains(RoleType.ORGANIZATION);
 
         if (hasOrganizationRole) {
             log.info("User with ID: {} has organization role", getUserResponse.getId());

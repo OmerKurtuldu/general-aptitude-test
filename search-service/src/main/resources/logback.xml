@@ -6,7 +6,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>C:/dev/logs/management-service/application.log</file>
+        <file>C:/dev/logs/search-service/application.log</file>
         <encoder>
             <pattern>%d %p %C{1} [%t] %m%n</pattern>
         </encoder>

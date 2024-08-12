@@ -26,6 +26,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/api/v1/user/getAll").hasAnyAuthority(RoleType.ADMIN.name())
                         .requestMatchers(HttpMethod.PUT,"/api/v1/user/update").hasAnyAuthority(RoleType.ADMIN.name(),RoleType.ORGANIZATION.name())
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/user/delete/{id}").hasAnyAuthority(RoleType.ADMIN.name())
+                        .requestMatchers(HttpMethod.POST, "/api/invitation/send").hasAnyAuthority(RoleType.ORGANIZATION.name())
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .anyRequest().permitAll()
                 );

@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -85,13 +86,14 @@ public class OptionManager implements OptionService {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow( () -> new BusinessException(messageService.getMessage(Messages.OptionsErrors.OptionsShouldBeExist)));
 
-        List<Option> options = option.getQuestion().getOptions();
+        List<Option> options = new ArrayList<>(option.getQuestion().getOptions());
 
         optionBusinessRules.validateUserAuthorization(option.getQuestion().getCreatorId());
         questionBusinessRules.checkIfQuestionIsEditable(option.getQuestion().getIsEditable());
         optionBusinessRules.validateAtLeastTwoOptions(options);
         optionBusinessRules.validateAtLeastOneCorrectOptionRemaining(option.getQuestion().getId(), optionId);
 
+        options.clear();
         optionRepository.deleteById(optionId);
 
         log.info("Option with ID: {} deleted successfully", optionId);

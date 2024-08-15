@@ -46,7 +46,7 @@ public class UserBusinessRules {
         boolean hasOrganizationRole = false;
 
         for (RoleType role : authorities) {
-            if (role.equals(RoleType.ORGANIZATION)) {
+            if (role.equals(RoleType.ORGANIZATION.name())) {
                 hasOrganizationRole = true;
                 break;
             }

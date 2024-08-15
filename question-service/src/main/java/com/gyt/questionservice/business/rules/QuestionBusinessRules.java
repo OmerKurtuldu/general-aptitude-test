@@ -22,7 +22,7 @@ public class QuestionBusinessRules {
         boolean hasOrganizationRole = false;
 
         for (String role : authenticatedUser.getRoles()) {
-            if (role.equals(RoleType.ORGANIZATION)) {
+            if (role.equals(RoleType.ORGANIZATION.name())) {
                 hasOrganizationRole = true;
             }
         }

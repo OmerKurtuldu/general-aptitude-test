@@ -184,8 +184,8 @@ public class QuestionManager implements QuestionService {
 
     private Question createAndSaveQuestion(CreateQuestionRequest request) {
         Question question = questionMapper.createQuestionRequestToEntity(request);
-        Long creatorId = getCreatorId(managementServiceClient.getAuthenticatedUser());
-        question.setCreatorId(creatorId);
+        GetUserResponse authenticatedUser = managementServiceClient.getAuthenticatedUser();
+        question.setCreatorId(authenticatedUser.getId());
         return questionRepository.save(question);
     }
 

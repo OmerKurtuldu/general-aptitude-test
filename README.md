@@ -130,7 +130,7 @@ Projemizde ortak yapılar için **core** ve **common** paketleri kullanılmışt
 
 ## Docker
 
-Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Docker container'ları içerisinde çalıştırılmaktadır. Her servis için Dockerfile tanımlamaları mevcuttur ve bu servisler ayrı portlarda ayağa kaldırılmaktadır.
+Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Docker container'ları içerisinde çalıştırılmaktadır.
 
 ## 📦 Kurulum ve Çalıştırma
 

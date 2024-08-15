@@ -140,7 +140,7 @@ Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Do
    cd general-aptitude-test
    ```
 
-2. **Docker Compose ile Tüm Servisleri Başlatın**:
+2. **Docker Compose ile Yapıları Başlatın**:
    Projedeki Kafka, Prometheus, Grafana ve diğer bağımlılıkları Docker Compose kullanarak başlatabilirsiniz.
    ```bash
    docker-compose up -d
@@ -151,7 +151,9 @@ Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Do
 3. Prometheus ve Grafana entegrasyonuyla sisteminize ait verileri kolayca izleyebilir ve analiz edebilirsiniz. Aşağıda Grafana'dan bir ekran görüntüsü bulunmaktadır:
 
 
-4. **Eureka Dashboard'u Kontrol Edin**:
+
+
+5. **Eureka Dashboard'u Kontrol Edin**:
    Discovery Server üzerinde tüm mikroservislerin sağlıklı bir şekilde başlatıldığını doğrulamak için Eureka Dashboard'u ziyaret edebilirsiniz.
 
 ## 👥 Katkıda Bulunma

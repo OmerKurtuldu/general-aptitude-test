@@ -29,7 +29,7 @@ public class QuestionConsumer {
 
     @KafkaListener(topics = "question-updated", groupId = "search")
     public void consumeUpdatedQuestionEvent(UpdatedQuestionEvent event) {
-        log.info("Received UpdatedQuestionEvent with ID: {}", event.getId());
+        log.info("Received UpdatedExamEvent with ID: {}", event.getId());
         Question question = questionMapper.updatedQuestionEventToQuestion(event);
         questionSearchService.update(question);
         log.info("Question with ID: {} has been updated.", question.getId());

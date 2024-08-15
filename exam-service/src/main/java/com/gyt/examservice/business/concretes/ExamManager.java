@@ -1,6 +1,8 @@
 package com.gyt.examservice.business.concretes;
 
 import com.gyt.corepackage.business.abstracts.MessageService;
+import com.gyt.corepackage.events.exam.CreatedExamEvent;
+import com.gyt.corepackage.events.rule.RuleEvent;
 import com.gyt.corepackage.utils.exceptions.types.BusinessException;
 import com.gyt.examservice.api.clients.ManagementServiceClient;
 import com.gyt.examservice.business.abstracts.ExamService;
@@ -16,6 +18,7 @@ import com.gyt.examservice.business.dtos.response.getAll.GetAllExamResponse;
 import com.gyt.examservice.business.dtos.response.update.UpdateExamResponse;
 import com.gyt.examservice.business.messages.Messages;
 import com.gyt.examservice.business.rules.ExamBusinessRules;
+import com.gyt.examservice.kafka.producer.ExamProducer;
 import com.gyt.examservice.mapper.ExamMapper;
 import com.gyt.examservice.mapper.RuleMapper;
 import com.gyt.examservice.model.entities.Exam;
@@ -50,6 +53,7 @@ public class ExamManager implements ExamService {
     private final RuleMapper ruleMapper;
     private final ExamBusinessRules examBusinessRules;
     private final MessageService messageService;
+    private final ExamProducer examProducer;
 
     @Override
     @Transactional
@@ -82,6 +86,8 @@ public class ExamManager implements ExamService {
         CreateExamResponse createExamResponse = examMapper.createExamToResponse(exam);
         createExamResponse.setQuestions(fetchAndMapQuestions(createExamRequest.getQuestionIds()));
         createExamResponse.setRules(createRuleResponses);
+
+        sendCreatedExamToSearchService(exam);
 
         log.info("Created exam with ID: {}", createExamResponse.getId());
 
@@ -269,5 +275,14 @@ public class ExamManager implements ExamService {
         log.info("Extended end date of exam ID: {} to new end date: {}", examId, newEndDate);
 
     }
+
+    private void sendCreatedExamToSearchService(Exam exam) {
+        List<RuleEvent> ruleEvents = exam.getRules().stream().map(rule -> ruleMapper.ruleToRuleEvent(rule))
+                .collect(Collectors.toList());
+        CreatedExamEvent createExamEvent = examMapper.examToCreatedExamEvent(exam);
+        createExamEvent.setRules(ruleEvents);
+        examProducer.sendExamForCreate(createExamEvent);
+    }
+
 
 }

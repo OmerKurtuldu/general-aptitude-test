@@ -14,7 +14,7 @@ Proje, altı ana mikroservisten ve birkaç destekleyici servisten oluşmaktadır
 6. **Discovery Server**
 7. **Config Server**
 
-Bu mikroservisler, birbirleriyle asenkron olarak Kafka mesajlaşma sistemi aracılığıyla haberleşmektedir.
+Bu mikroservisler; birbirleriyle asenkron olarak Kafka, senkron olarakta gRPC ve OpenFeign aracılığıyla haberleşmektedir
 
 ## 🔧 Kullanılan Teknolojiler
 

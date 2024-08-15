@@ -148,7 +148,7 @@ Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Do
 
 ## 📊 Monitoring ve Gözlemleme
 
-3. Prometheus ve Grafana entegrasyonuyla sisteminize ait verileri kolayca izleyebilir ve analiz edebilirsiniz. Aşağıda Grafana'dan bir ekran görüntüsü bulunmaktadır:
+1. Prometheus ve Grafana entegrasyonuyla sisteminize ait verileri kolayca izleyebilir ve analiz edebilirsiniz. Aşağıda Grafana'dan bir ekran görüntüsü bulunmaktadır:
 
 ## PROMETHEUS
 
@@ -160,7 +160,7 @@ Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Do
 
 ![image](https://github.com/user-attachments/assets/10d6c806-7dc0-46f1-9d3a-f55536fb7740)
 
-5. **Eureka Dashboard'u Kontrol Edin**:
+2. **Eureka Dashboard'u Kontrol Edin**:
    Discovery Server üzerinde tüm mikroservislerin sağlıklı bir şekilde başlatıldığını doğrulamak için Eureka Dashboard'u ziyaret edebilirsiniz.
 
 ## 👥 Katkıda Bulunma

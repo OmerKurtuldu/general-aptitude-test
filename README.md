@@ -1,8 +1,8 @@
-# Genel Yetenek Testi
+# 🎯 Genel Yetenek Testi
 
 Bu proje, organizasyonların genel yetenek testleri oluşturmasına, sorular eklemesine ve adaylarını bu testlere davet etmesine olanak tanıyan bir mikroservis mimarisi üzerine inşa edilmiş bir uygulamadır.
 
-## Proje Yapısı
+## 📂 Proje Yapısı
 
 Proje, altı ana mikroservisten ve birkaç destekleyici servisten oluşmaktadır:
 
@@ -16,7 +16,7 @@ Proje, altı ana mikroservisten ve birkaç destekleyici servisten oluşmaktadır
 
 Bu mikroservisler, birbirleriyle asenkron olarak Kafka mesajlaşma sistemi aracılığıyla haberleşmektedir.
 
-## Kullanılan Teknolojiler
+## 🔧 Kullanılan Teknolojiler
 
 - **Spring Boot**: Tüm mikroservisler için kullanılan ana çerçeve.
 - **gRPC**: ExamService ile QuestionService arasında soru çekmek için kullanıldı.
@@ -132,7 +132,7 @@ Projemizde ortak yapılar için **core** ve **common** paketleri kullanılmışt
 
 Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Docker container'ları içerisinde çalıştırılmaktadır. Her servis için Dockerfile tanımlamaları mevcuttur ve bu servisler ayrı portlarda ayağa kaldırılmaktadır.
 
-## Kurulum ve Çalıştırma
+## 📦 Kurulum ve Çalıştırma
 
 1. **Projeyi Klonlayın**:
    ```bash
@@ -146,13 +146,15 @@ Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Do
    docker-compose up -d
    ```
 
-3. **Grafana'yı Başlatın**:
-   Custom Grafana arayüzünü import etmek için Grafana arayüzüne gidin ve import işlemini gerçekleştirin.
+## 📊 Monitoring ve Gözlemleme
+
+3. Prometheus ve Grafana entegrasyonuyla sisteminize ait verileri kolayca izleyebilir ve analiz edebilirsiniz. Aşağıda Grafana'dan bir ekran görüntüsü bulunmaktadır:
+
 
 4. **Eureka Dashboard'u Kontrol Edin**:
    Discovery Server üzerinde tüm mikroservislerin sağlıklı bir şekilde başlatıldığını doğrulamak için Eureka Dashboard'u ziyaret edebilirsiniz.
 
-## Katkıda Bulunma
+## 👥 Katkıda Bulunma
 
 Katkıda bulunmak isterseniz, lütfen bir pull request gönderin. Hataları bildirmek için bir issue açabilirsiniz.
 

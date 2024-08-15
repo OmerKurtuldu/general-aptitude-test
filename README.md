@@ -162,6 +162,9 @@ Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Do
 
 2. **Eureka Dashboard'u Kontrol Edin**:
    Discovery Server üzerinde tüm mikroservislerin sağlıklı bir şekilde başlatıldığını doğrulamak için Eureka Dashboard'u ziyaret edebilirsiniz.
+   
+   ![image](https://github.com/user-attachments/assets/51e4c434-dbfb-4c20-920f-1dd66ae5221d)
+
 
 ## 👥 Katkıda Bulunma
 

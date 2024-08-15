@@ -148,7 +148,7 @@ Projede tüm servisler ve ilgili bileşenler (Kafka, Prometheus, Grafana vb.) Do
 
 ## 📊 Monitoring ve Gözlemleme
 
-1. Prometheus ve Grafana entegrasyonuyla sisteminize ait verileri kolayca izleyebilir ve analiz edebilirsiniz. Aşağıda Grafana'dan bir ekran görüntüsü bulunmaktadır:
+1. Prometheus ve Grafana entegrasyonuyla sisteminize ait verileri kolayca izleyebilir ve analiz edebilirsiniz. Aşağıda Prometheus ve Grafana'dan bir ekran görüntüsü bulunmaktadır:
 
 ## PROMETHEUS
 

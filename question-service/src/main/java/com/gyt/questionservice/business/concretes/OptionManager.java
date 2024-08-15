@@ -1,9 +1,13 @@
 package com.gyt.questionservice.business.concretes;
 
+import com.gyt.corepackage.business.abstracts.MessageService;
+import com.gyt.corepackage.utils.exceptions.types.BusinessException;
 import com.gyt.questionservice.business.abstracts.OptionService;
 import com.gyt.questionservice.business.dtos.dto.OptionDto;
 import com.gyt.questionservice.business.dtos.request.update.UpdateOptionRequest;
+import com.gyt.questionservice.business.messages.Messages;
 import com.gyt.questionservice.business.rules.OptionBusinessRules;
+import com.gyt.questionservice.business.rules.QuestionBusinessRules;
 import com.gyt.questionservice.mapper.OptionMapper;
 import com.gyt.questionservice.models.entities.Option;
 import com.gyt.questionservice.repository.OptionRepository;
@@ -25,18 +29,21 @@ public class OptionManager implements OptionService {
     private final OptionRepository optionRepository;
     private final OptionBusinessRules optionBusinessRules;
     private final OptionMapper optionMapper;
+    private final QuestionBusinessRules questionBusinessRules;
+    private final MessageService messageService;
+
 
     @Override
     public OptionDto updateOption(UpdateOptionRequest request) {
         log.info("Update request received for option with ID: {}", request.getId());
 
-        optionBusinessRules.optionShouldBeExist(request.getId());
-
-        Option existingOption = optionRepository.findById(request.getId()).orElseThrow();
+        Option existingOption = optionRepository.findById(request.getId())
+                .orElseThrow( () -> new BusinessException(messageService.getMessage(Messages.OptionsErrors.OptionsShouldBeExist)));
 
         optionBusinessRules.validateUserAuthorization(existingOption.getQuestion().getCreatorId());
+        questionBusinessRules.checkIfQuestionIsEditable(existingOption.getQuestion().getIsEditable());
         optionBusinessRules.validateTextAndImagePresence(request.getText(), request.getImageUrl());
-        optionBusinessRules.validateCorrectOption(request);
+        optionBusinessRules.validateCorrectOption(existingOption);
 
         Option option = optionMapper.updateRequestToOption(request);
         option.setQuestion(existingOption.getQuestion());
@@ -52,9 +59,8 @@ public class OptionManager implements OptionService {
     public OptionDto getOptionById(Long optionId) {
         log.info("Get request received for option with ID: {}", optionId);
 
-        optionBusinessRules.optionShouldBeExist(optionId);
-
-        Option option = optionRepository.findById(optionId).orElseThrow();
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow( () -> new BusinessException(messageService.getMessage(Messages.OptionsErrors.OptionsShouldBeExist)));
 
         log.info("Successfully retrieved option with ID: {}", optionId);
 
@@ -76,13 +82,13 @@ public class OptionManager implements OptionService {
     public void deleteOptionById(Long optionId) {
         log.info("Delete request received for option with ID: {}", optionId);
 
-        Option option = optionRepository.findById(optionId).orElseThrow(() -> new NotFoundException("Option not found"));
-
-        optionBusinessRules.optionShouldBeExist(optionId);
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow( () -> new BusinessException(messageService.getMessage(Messages.OptionsErrors.OptionsShouldBeExist)));
 
         List<Option> options = option.getQuestion().getOptions();
 
         optionBusinessRules.validateUserAuthorization(option.getQuestion().getCreatorId());
+        questionBusinessRules.checkIfQuestionIsEditable(option.getQuestion().getIsEditable());
         optionBusinessRules.validateAtLeastTwoOptions(options);
         optionBusinessRules.validateAtLeastOneCorrectOptionRemaining(option.getQuestion().getId(), optionId);
 

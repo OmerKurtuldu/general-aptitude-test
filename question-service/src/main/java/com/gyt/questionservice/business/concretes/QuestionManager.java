@@ -81,6 +81,7 @@ public class QuestionManager implements QuestionService {
 
         questionBusinessRules.textAndImageValidationRule(request.getText(), request.getImageUrl());
         questionBusinessRules.userAuthorizationCheck(foundQuestion.getCreatorId());
+        questionBusinessRules.checkIfQuestionIsEditable(foundQuestion.getIsEditable());
 
         Question question = questionMapper.updateQuestionRequestToEntity(request);
         question.setCreatorId(foundQuestion.getCreatorId());
@@ -139,6 +140,7 @@ public class QuestionManager implements QuestionService {
                 .orElseThrow(() -> new BusinessException(messageService.getMessage(Messages.QuestionErrors.QuestionShouldBeExist)));
 
         questionBusinessRules.userAuthorizationCheck(foundQuestion.getCreatorId());
+        questionBusinessRules.checkIfQuestionIsEditable(foundQuestion.getIsEditable());
         questionRepository.deleteById(id);
 
         sendDeletedQuestionToSearchService(foundQuestion);
@@ -153,6 +155,7 @@ public class QuestionManager implements QuestionService {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new BusinessException(messageService.getMessage(Messages.QuestionErrors.QuestionShouldBeExist)));
 
+        questionBusinessRules.checkIfQuestionIsEditable(question.getIsEditable());
         optionBusinessRules.validateMaxFiveOptions(question.getOptions().size());
         optionBusinessRules.validateTextAndImagePresence(request.getText(), request.getImageUrl());
 

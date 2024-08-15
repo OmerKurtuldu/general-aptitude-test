@@ -40,14 +40,6 @@ public class UserBusinessRules {
         log.info("User found with ID: {}", id);
     }
 
-    public void userControlWithEmail(String email){
-        Optional<User> foundUser = userRepository.findByEmail(email);
-        if (foundUser.isEmpty()){
-            log.error("User not found with email: {}", email);
-            throw new BusinessException(messageService.getMessage(Messages.UserErrors.UserShouldBeExists));
-        }
-        log.info("User found with email: {}", email);
-    }
 
     public void userUpdateAuthorizationCheck(GetUserResponse user, Long id) {
         List<RoleType> authorities = user.getRoles();

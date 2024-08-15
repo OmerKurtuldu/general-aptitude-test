@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class RuleBusinessRules {
-    private final MessageService messageService;
 
 
 }

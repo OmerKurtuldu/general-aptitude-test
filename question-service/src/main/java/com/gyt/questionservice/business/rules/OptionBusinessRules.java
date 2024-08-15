@@ -51,14 +51,6 @@ public class OptionBusinessRules {
     }
 
 
-    public void optionShouldBeExist(Long id) {
-        Optional<Option> foundOption = optionRepository.findById(id);
-        if (foundOption.isEmpty()) {
-            log.error("Option with ID: {} does not exist", id);
-            throw new BusinessException(messageService.getMessage(Messages.OptionsErrors.OptionsShouldBeExist));
-        }
-    }
-
     public void validateTextAndImagePresence(String text, String image) {
         if ((text.isEmpty() || text.isBlank()) && (image.isEmpty() || image.isBlank())) {
             log.error("Both text and image are empty or blank");
@@ -66,20 +58,16 @@ public class OptionBusinessRules {
         }
     }
 
-
-    // TODO: 5.08.2024 son iki iş kuralı değerlendirelecek
-    public void validateCorrectOption(UpdateOptionRequest request) {
-        Option existingOption = optionRepository.findById(request.getId()).orElseThrow();
-
-        if (Boolean.FALSE.equals(request.getIsCorrect())) {
-            List<Option> allOptions = optionRepository.findAllByQuestionId(existingOption.getQuestion().getId());
+    public void validateCorrectOption(Option option) {
+        if (Boolean.FALSE.equals(option.getIsCorrect())) {
+            List<Option> allOptions = optionRepository.findAllByQuestionId(option.getQuestion().getId());
 
             boolean hasAnotherCorrectOption = allOptions.stream()
-                    .filter(option -> !option.getId().equals(existingOption.getId()))
+                    .filter(filterOption -> !filterOption.getId().equals(option.getId()))
                     .anyMatch(Option::getIsCorrect);
 
             if (!hasAnotherCorrectOption) {
-                log.error("No other correct option found for question ID: {}", existingOption.getQuestion().getId());
+                log.error("No other correct option found for question ID: {}", option.getQuestion().getId());
                 throw new BusinessException(messageService.getMessage(Messages.OptionsErrors.AtLeastOneCorrectOptionRule));
             }
         }

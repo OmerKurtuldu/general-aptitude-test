@@ -77,6 +77,6 @@ public class QuestionController {
     @ResponseStatus(HttpStatus.OK)
     public void UpdateQuestionsEditableStatus(@RequestBody UpdateQuestionEditableRequest request) {
         questionService.updateQuestionsEditableStatus(request);
-
+        log.info("Successfully processed update request for question editable status: {}", request);
     }
 }

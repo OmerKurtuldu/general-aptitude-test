@@ -2,6 +2,7 @@ package com.gyt.questionservice.configurations;
 
 
 import com.gyt.corepackage.jwt.JwtService;
+import com.gyt.corepackage.models.enums.RoleType;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,8 @@
 package com.gyt.managementservice.business.concretes;
 
+import com.gyt.corepackage.business.abstracts.MessageService;
 import com.gyt.corepackage.models.enums.RoleType;
+import com.gyt.corepackage.utils.exceptions.types.BusinessException;
 import com.gyt.managementservice.business.abstracts.RoleService;
 import com.gyt.managementservice.business.abstracts.UserService;
 import com.gyt.managementservice.business.dtos.request.RegisterRequest;
@@ -9,6 +11,7 @@ import com.gyt.managementservice.business.dtos.response.get.GetAllUserResponse;
 import com.gyt.managementservice.business.dtos.response.get.GetRoleResponse;
 import com.gyt.managementservice.business.dtos.response.get.GetUserResponse;
 import com.gyt.managementservice.business.dtos.response.update.UpdatedUserResponse;
+import com.gyt.managementservice.business.messages.Messages;
 import com.gyt.managementservice.business.rules.UserBusinessRules;
 import com.gyt.managementservice.mapper.RoleMapper;
 import com.gyt.managementservice.mapper.UserMapper;
@@ -43,17 +46,17 @@ public class UserManager implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserBusinessRules userBusinessRules;
     private final RoleService roleService;
+    private final MessageService messageService;
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.debug("Attempting to load user by username: {}", username);
 
-        userBusinessRules.userControlWithEmail(username);
-
-        Optional<User> userByEmail = userRepository.findByEmail(username);
+        User userByEmail = userRepository.findByEmail(username)
+                .orElseThrow(() -> new BusinessException(messageService.getMessage(Messages.UserErrors.UserShouldBeExists)));
         log.info("Successfully loaded user by username: {}", username);
-        return userByEmail.get();
+        return userByEmail;
     }
 
     // TODO: 30.07.2024 mail adresi unique olmalı, iş kuralı ile kontrol edilecek
@@ -167,10 +170,10 @@ public class UserManager implements UserService {
     @Override
     public User getByEmail(String email) {
         log.debug("Fetching user by email: {}", email);
-        userBusinessRules.userControlWithEmail(email);
-        Optional<User> user = userRepository.findByEmail(email);
+        User userByEmail = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(messageService.getMessage(Messages.UserErrors.UserShouldBeExists)));
         log.info("Successfully fetched user by email: {}", email);
-        return user.get();
+        return userByEmail;
     }
 
 }

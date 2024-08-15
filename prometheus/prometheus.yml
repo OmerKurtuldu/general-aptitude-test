@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+
+scrape_configs:
+  - job_name: 'discovery-server'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8761'] ## only for demo purposes don't use host.docker.internal in production
+  - job_name: 'management-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:9001'] ## only for demo purposes don't use host.docker.internal in production
+        labels:
+          application: 'Management Service'
+  - job_name: 'question-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:9002'] ## only for demo purposes don't use host.docker.internal in production
+        labels:
+          application: 'Question Service'
+  - job_name: 'exam-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:9003'] ## only for demo purposes don't use host.docker.internal in production
+        labels:
+          application: 'Exam Service'
+  - job_name: 'search-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:9004'] ## only for demo purposes don't use host.docker.internal in production
+        labels:
+          application: 'Search Service'
+  - job_name: 'mail-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:9005' ] ## only for demo purposes don't use host.docker.internal in production
+        labels:
+          application: 'Mail Service'

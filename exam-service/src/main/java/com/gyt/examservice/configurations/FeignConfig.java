@@ -22,7 +22,7 @@ public class FeignConfig {
         return new RequestInterceptor() {
             @Override
             public void apply(RequestTemplate requestTemplate) {
-                String jwtToken = jwtService.generateToken("admin", List.of("ADMIN")); // Kullanıcı rolleri burada alınmalı
+                String jwtToken = jwtService.generateToken("admin@admin.com", List.of("ADMIN")); // Kullanıcı rolleri burada alınmalı
                 requestTemplate.header("Authorization", "Bearer " + jwtToken);
             }
         };

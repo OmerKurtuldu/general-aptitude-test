@@ -23,7 +23,6 @@ public class Question extends BaseEntity {
     @Column(nullable = false)
     private Boolean isEditable = true;
 
-    // TODO: 9.08.2024 eager nasıl olur ?  
     @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, mappedBy = "question")
     private List<Option> options;
 

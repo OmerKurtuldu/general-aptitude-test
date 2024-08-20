@@ -1,7 +1,7 @@
 package com.gyt.examservice.business.concretes;
 
 import com.gyt.corepackage.business.abstracts.MessageService;
-import com.gyt.corepackage.events.exam.CreatedExamEvent;
+import com.gyt.corepackage.events.exam.*;
 import com.gyt.corepackage.events.rule.RuleEvent;
 import com.gyt.corepackage.utils.exceptions.types.BusinessException;
 import com.gyt.examservice.api.clients.ManagementServiceClient;
@@ -58,7 +58,6 @@ public class ExamManager implements ExamService {
     @Override
     @Transactional
     public CreateExamResponse createExam(CreateExamRequest createExamRequest) {
-        //Todo grpcden giden istek de soru yoksa hata fırlatmalı
         log.info("Creating exam with request: {}", createExamRequest);
 
         examBusinessRules.validateExamDates(createExamRequest.getStartDate(), createExamRequest.getEndDate());
@@ -119,6 +118,8 @@ public class ExamManager implements ExamService {
 
         UpdateExamResponse updateExamResponse = examMapper.updateExamToResponse(existingExam);
         updateExamResponse.setQuestions(fetchAndMapQuestions(updateExamRequest.getQuestionIds()));
+
+        sendUpdatedExamToSearchService(exam);
 
         log.info("Updated exam with ID: {}", updateExamResponse.getId());
 
@@ -211,7 +212,10 @@ public class ExamManager implements ExamService {
         examBusinessRules.userAuthorizationCheck(exam.getOrganizationId(), authenticatedUser);
         examBusinessRules.checkIfExamCanBeModified(exam.getStatus());
 
+        sendDeletedExamToSearchService(exam);
+
         examRepository.deleteById(id);
+
 
         log.info("Deleted exam with ID: {}", id);
 
@@ -225,11 +229,15 @@ public class ExamManager implements ExamService {
         Exam exam = examRepository.findById(examId).orElseThrow(
                 () -> new BusinessException(messageService.getMessage(Messages.ExamErrors.ExamShouldBeExist)));
 
+        fetchAndMapQuestions(List.of(questionId));
+
         GetUserResponse authenticatedUser = managementServiceClient.getAuthenticatedUser();
 
         examBusinessRules.userAuthorizationCheck(exam.getOrganizationId(), authenticatedUser);
         examBusinessRules.checkIfExamCanBeModified(exam.getStatus());
         examBusinessRules.checkIfQuestionAlreadyExistsInExam(exam, questionId);
+
+        sendQuestionAddedExamToSearchService(examId,questionId);
 
         exam.getQuestionIds().add(questionId);
         examRepository.save(exam);
@@ -251,6 +259,8 @@ public class ExamManager implements ExamService {
         examBusinessRules.checkIfQuestionExistsInExam(exam.getQuestionIds(), questionId);
         examBusinessRules.checkIfLastQuestionInExam(exam);
 
+        sendQuestionRemovedToSearchService(examId,questionId);
+
         exam.getQuestionIds().remove(questionId);
         examRepository.save(exam);
 
@@ -269,6 +279,8 @@ public class ExamManager implements ExamService {
         examBusinessRules.userAuthorizationCheck(exam.getOrganizationId(), authenticatedUser);
         examBusinessRules.checkIfExamIsInProgress(exam.getStatus());
 
+        sendEndDateExtendedForExamToSearchService(examId,newEndDate);
+
         exam.setEndDate(newEndDate);
         examRepository.save(exam);
 
@@ -281,8 +293,37 @@ public class ExamManager implements ExamService {
                 .collect(Collectors.toList());
         CreatedExamEvent createExamEvent = examMapper.examToCreatedExamEvent(exam);
         createExamEvent.setRules(ruleEvents);
+        createExamEvent.setQuestionSize(exam.getQuestionIds().size());
         examProducer.sendExamForCreate(createExamEvent);
     }
 
+    private void sendUpdatedExamToSearchService(Exam exam) {
+        List<RuleEvent> ruleEvents = exam.getRules().stream().map(ruleMapper::ruleToRuleEvent)
+                .collect(Collectors.toList());
+        UpdatedExamEvent updateExamEvent = examMapper.examToUpdatedExamEvent(exam);
+        updateExamEvent.setRules(ruleEvents);
+        updateExamEvent.setQuestionSize(exam.getQuestionIds().size());
+        examProducer.sendExamForUpdate(updateExamEvent);
+    }
+
+    private void sendDeletedExamToSearchService(Exam exam){
+        DeletedExamEvent deletedExamEvent = examMapper.examToDeletedExamEvent(exam);
+        examProducer.sendExamForDelete(deletedExamEvent);
+    }
+
+    private void sendQuestionAddedExamToSearchService(Long examId,Long questionId){
+        AddedQuestionToExamEvent event = new AddedQuestionToExamEvent(examId, questionId);
+        examProducer.sendExamForAddedQuestion(event);
+    }
+
+    private void sendQuestionRemovedToSearchService(Long examId,Long qustionId){
+        RemovedQuestionToExamEvent event = new RemovedQuestionToExamEvent(examId,qustionId);
+        examProducer.sendExamForRemovedQuestion(event);
+    }
+
+    private void sendEndDateExtendedForExamToSearchService(Long examId, LocalDateTime newDate){
+        EndDateExtendedForExamEvent event = new EndDateExtendedForExamEvent(examId,newDate);
+        examProducer.sendExamEndDateExtended(event);
+    }
 
 }

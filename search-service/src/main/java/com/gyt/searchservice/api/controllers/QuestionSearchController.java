@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("search-service/api/v1/questions")
 @Slf4j
-public class SearchController {
+public class QuestionSearchController {
     private final QuestionSearchService questionSearchService;
 
     @PostMapping

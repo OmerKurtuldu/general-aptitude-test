@@ -10,6 +10,8 @@ public class Messages {
     public static class UserErrors{
         public static final String UserShouldBeExists = "userShouldBeExists";
         public static final String UpdateAuthorityError = "updateAuthorityError";
+        public static final String EmailAlreadyInUse = "emailAlreadyInUse";
+
     }
 
     public static class RoleErrors{

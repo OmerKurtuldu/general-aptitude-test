@@ -1,6 +1,8 @@
 package com.gyt.searchservice.business.concretes;
 
-import com.gyt.searchservice.business.abstracts.ExamService;
+import com.gyt.corepackage.business.abstracts.MessageService;
+import com.gyt.corepackage.utils.exceptions.types.BusinessException;
+import com.gyt.searchservice.business.abstracts.ExamSearchService;
 import com.gyt.searchservice.core.services.SearchService;
 import com.gyt.searchservice.core.services.models.DynamicQuery;
 import com.gyt.searchservice.models.entities.Exam;
@@ -12,9 +14,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ExamManager implements ExamService {
+public class ExamSearchManager implements ExamSearchService {
     private final ExamRepository examRepository;
     private final SearchService searchService;
+    private final MessageService messageService;
 
     @Override
     public void add(Exam exam) {
@@ -29,6 +32,13 @@ public class ExamManager implements ExamService {
     @Override
     public void delete(Long id) {
         examRepository.deleteById(id);
+    }
+
+    @Override
+    public Exam getById(Long id) {
+        return examRepository.findById(id).orElseThrow(
+                () -> new BusinessException(messageService.getMessage("Boyle bir sinav bulunamadi."))
+        );
     }
 
     @Override

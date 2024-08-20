@@ -1,6 +1,6 @@
 package com.gyt.examservice.kafka.producer;
 
-import com.gyt.corepackage.events.exam.CreatedExamEvent;
+import com.gyt.corepackage.events.exam.*;
 import com.gyt.corepackage.events.question.CreatedQuestionEvent;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -24,6 +24,57 @@ public class ExamProducer {
         Message<CreatedExamEvent> message = MessageBuilder
                 .withPayload(createdExamEvent)
                 .setHeader(KafkaHeaders.TOPIC, "exam-created")
+                .build();
+        kafkaTemplate.send(message);
+    }
+
+    public void sendExamForUpdate(UpdatedExamEvent updatedExamEvent) {
+        LOGGER.info(String.format("Question updated event =>%s", updatedExamEvent));
+
+        Message<UpdatedExamEvent> message = MessageBuilder
+                .withPayload(updatedExamEvent)
+                .setHeader(KafkaHeaders.TOPIC, "exam-updated")
+                .build();
+        kafkaTemplate.send(message);
+    }
+
+    public void sendExamForDelete(DeletedExamEvent deletedExamEvent) {
+        LOGGER.info(String.format("Question updated event =>%s", deletedExamEvent));
+
+        Message<DeletedExamEvent> message = MessageBuilder
+                .withPayload(deletedExamEvent)
+                .setHeader(KafkaHeaders.TOPIC, "exam-deleted")
+                .build();
+        kafkaTemplate.send(message);
+    }
+
+
+    public void sendExamForAddedQuestion(AddedQuestionToExamEvent addedQuestionToExamEvent) {
+        LOGGER.info(String.format("Question added for exam event =>%s", addedQuestionToExamEvent));
+
+        Message<AddedQuestionToExamEvent> message = MessageBuilder
+                .withPayload(addedQuestionToExamEvent)
+                .setHeader(KafkaHeaders.TOPIC, "exam-for-added-question")
+                .build();
+        kafkaTemplate.send(message);
+    }
+
+    public void sendExamForRemovedQuestion(RemovedQuestionToExamEvent removedQuestionToExamEvent) {
+        LOGGER.info(String.format("Question removed for exam event =>%s", removedQuestionToExamEvent));
+
+        Message<RemovedQuestionToExamEvent> message = MessageBuilder
+                .withPayload(removedQuestionToExamEvent)
+                .setHeader(KafkaHeaders.TOPIC, "exam-for-removed-question")
+                .build();
+        kafkaTemplate.send(message);
+    }
+
+    public void sendExamEndDateExtended(EndDateExtendedForExamEvent endDateExtendedForExamEvent) {
+        LOGGER.info(String.format("Exam end date extended event =>%s", endDateExtendedForExamEvent));
+
+        Message<EndDateExtendedForExamEvent> message = MessageBuilder
+                .withPayload(endDateExtendedForExamEvent)
+                .setHeader(KafkaHeaders.TOPIC, "exam-endate-extended")
                 .build();
         kafkaTemplate.send(message);
     }

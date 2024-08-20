@@ -47,6 +47,8 @@ public class UserManager implements UserService {
     private final UserBusinessRules userBusinessRules;
     private final RoleService roleService;
     private final MessageService messageService;
+    private final UserMapper userMapper;
+    private final RoleMapper roleMapper;
 
 
     @Override
@@ -59,16 +61,17 @@ public class UserManager implements UserService {
         return userByEmail;
     }
 
-    // TODO: 30.07.2024 mail adresi unique olmalı, iş kuralı ile kontrol edilecek
     @Override
     public void addOrganization(RegisterRequest request) {
         log.info("Adding new organization with email: {}", request.getEmail());
 
-        User user = UserMapper.INSTANCE.registerRequestToUser(request, passwordEncoder);
+        userBusinessRules.validateUniqueEmail(request.getEmail());
+
+        User user = userMapper.registerRequestToUser(request, passwordEncoder);
 
         RoleType roleType = RoleType.ORGANIZATION;
         GetRoleResponse roleResponse = roleService.getByRoleType(roleType);
-        Role role = RoleMapper.INSTANCE.getResponseToRole(roleResponse);
+        Role role = roleMapper.getResponseToRole(roleResponse);
 
         user.setAuthorities(Set.of(role));
         userRepository.save(user);
@@ -89,7 +92,7 @@ public class UserManager implements UserService {
         List<RoleType> roleNames = roles.stream()
                 .map(Role::getName)
                 .collect(Collectors.toList());
-        GetUserResponse getUserResponse = UserMapper.INSTANCE.getUserToResponse(user);
+        GetUserResponse getUserResponse = userMapper.getUserToResponse(user);
         getUserResponse.setRoles(roleNames);
         log.info("Successfully fetched user by ID: {}", id);
         return getUserResponse;
@@ -103,7 +106,7 @@ public class UserManager implements UserService {
         Page<User> usersPage = userRepository.findAll(pageable);
 
         return usersPage.map(user -> {
-            GetAllUserResponse response = UserMapper.INSTANCE.getAllResponseToEntity(user);
+            GetAllUserResponse response = userMapper.getAllResponseToEntity(user);
             List<RoleType> roleNames = user.getAuthorities().stream()
                     .map(Role::getName)
                     .collect(Collectors.toList());
@@ -122,12 +125,12 @@ public class UserManager implements UserService {
         GetUserResponse authenticatedUser = getAuthenticatedUser();
         Set<Role> authorities = updateFoundUser.getAuthorities();
         userBusinessRules.userUpdateAuthorizationCheck(authenticatedUser, request.getId());
-        User user = UserMapper.INSTANCE.updatedRequestToUser(request, passwordEncoder);
+        User user = userMapper.updatedRequestToUser(request, passwordEncoder);
         Set<Role> role = setUserAuthorities(authorities);
         user.setAuthorities(role);
         userRepository.save(user);
         log.info("Successfully updated user with ID: {}", request.getId());
-        return UserMapper.INSTANCE.updatedUserToResponse(user);
+        return userMapper.updatedUserToResponse(user);
     }
 
 
@@ -146,15 +149,21 @@ public class UserManager implements UserService {
 
     public GetUserResponse getAuthenticatedUser() {
         log.debug("Fetching authenticated user");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         userBusinessRules.ifNotAuthenticated(authentication);
-        User user = userRepository.findByEmail(authentication.getPrincipal().toString()).orElseThrow();
+
+        User user = userRepository.findByEmail(authentication.getPrincipal().toString())
+                .orElseThrow(() -> new BusinessException(messageService.getMessage(Messages.UserErrors.UserShouldBeExists)));
+
         Set<Role> roles = user.getAuthorities();
         List<RoleType> roleNames = roles.stream()
                 .map(Role::getName)
                 .collect(Collectors.toList());
-        GetUserResponse getUserResponse = UserMapper.INSTANCE.getUserToResponse(user);
+
+        GetUserResponse getUserResponse = userMapper.getUserToResponse(user);
         getUserResponse.setRoles(roleNames);
+
         log.info("Successfully fetched authenticated user");
         return getUserResponse;
     }

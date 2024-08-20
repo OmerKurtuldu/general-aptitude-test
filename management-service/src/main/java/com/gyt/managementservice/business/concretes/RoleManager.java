@@ -19,11 +19,12 @@ import java.util.Optional;
 public class RoleManager implements RoleService {
     private final RoleRepository roleRepository;
     private final RoleBusinessRules roleBusinessRules;
+    private final RoleMapper roleMapper;
 
     @Override
     public GetRoleResponse getByRoleType(RoleType roleType) {
         roleBusinessRules.roleShouldBeExist(roleType);
         Optional<Role> role = roleRepository.findByName(roleType);
-        return RoleMapper.INSTANCE.getRoleToResponse(role.get());
+        return roleMapper.getRoleToResponse(role.get());
     }
 }

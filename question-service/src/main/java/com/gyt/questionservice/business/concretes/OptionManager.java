@@ -93,7 +93,7 @@ public class OptionManager implements OptionService {
         optionBusinessRules.validateAtLeastTwoOptions(options);
         optionBusinessRules.validateAtLeastOneCorrectOptionRemaining(option.getQuestion().getId(), optionId);
 
-        options.clear();
+        options.removeIf(opt -> opt.getId().equals(optionId));
         optionRepository.deleteById(optionId);
 
         log.info("Option with ID: {} deleted successfully", optionId);

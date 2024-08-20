@@ -60,4 +60,10 @@ public class UserBusinessRules {
             log.info("Update authorization check passed for user ID: {}", id);
         }
     }
+
+    public void validateUniqueEmail(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException(messageService.getMessage(Messages.UserErrors.EmailAlreadyInUse));
+        }
+    }
 }

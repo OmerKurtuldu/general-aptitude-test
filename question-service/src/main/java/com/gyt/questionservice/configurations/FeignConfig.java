@@ -26,7 +26,7 @@ public class FeignConfig {
             public void apply(RequestTemplate requestTemplate) {
                 Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
                 if (authentication != null && authentication.isAuthenticated()) {
-                    String jwtToken = jwtService.generateToken(authentication.getName(), List.of("ADMIN")); // Kullanıcı rolleri burada alınmalı
+                    String jwtToken = jwtService.generateToken(authentication.getName(), List.of("ADMIN"));
                     requestTemplate.header("Authorization", "Bearer " + jwtToken);
                 }
             }

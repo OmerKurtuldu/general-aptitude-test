@@ -63,7 +63,7 @@ public class UserBusinessRules {
 
     public void validateUniqueEmail(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException(messageService.getMessage(Messages.UserErrors.EmailAlreadyInUse));
+            throw new BusinessException(messageService.getMessage(Messages.UserErrors.EmailAlreadyInUse));
         }
     }
 }

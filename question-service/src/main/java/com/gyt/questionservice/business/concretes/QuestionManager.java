@@ -185,7 +185,8 @@ public class QuestionManager implements QuestionService {
     private Question createAndSaveQuestion(CreateQuestionRequest request) {
         Question question = questionMapper.createQuestionRequestToEntity(request);
         GetUserResponse authenticatedUser = managementServiceClient.getAuthenticatedUser();
-        question.setCreatorId(authenticatedUser.getId());
+        Long creatorId = questionAddControlByCreatorID(authenticatedUser);
+        question.setCreatorId(creatorId);
         return questionRepository.save(question);
     }
 
@@ -206,8 +207,8 @@ public class QuestionManager implements QuestionService {
     }
 
 
-    public Long getCreatorId(GetUserResponse getUserResponse) {
-        boolean hasOrganizationRole = getUserResponse.getRoles().contains(RoleType.ORGANIZATION);
+    public Long questionAddControlByCreatorID(GetUserResponse getUserResponse) {
+        boolean hasOrganizationRole = getUserResponse.getRoles().contains(RoleType.ORGANIZATION.name());
 
         if (hasOrganizationRole) {
             log.info("User with ID: {} has organization role", getUserResponse.getId());
